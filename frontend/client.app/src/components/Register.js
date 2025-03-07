@@ -1,8 +1,9 @@
+// src/components/Register.js
 import React, { useState } from 'react';
 import { getFingerprint } from '../services/fingerprintService';
 
-const Login = ({ setIsAuthenticated, setEmail }) => {
-  const [email, setEmailInput] = useState('');
+const Register = () => {
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
@@ -12,7 +13,7 @@ const Login = ({ setIsAuthenticated, setEmail }) => {
 
     try {
       const fingerprint = await getFingerprint();
-      const response = await fetch('https://localhost:7093/api/auth/login', {
+      const response = await fetch('https://localhost:7093/api/auth/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -25,16 +26,14 @@ const Login = ({ setIsAuthenticated, setEmail }) => {
       });
 
       if (!response.ok) {
-        throw new Error('Login failed');
+        throw new Error('Registration failed');
       }
 
       const data = await response.json();
       setSuccessMessage(data.message);
       setError('');
-      setIsAuthenticated(true);
-      setEmail(email); // Set the email after successful login
     } catch (error) {
-      setError('Login failed. Please try again.');
+      setError('Registration failed. Please try again.');
       setSuccessMessage('');
     }
   };
@@ -46,7 +45,7 @@ const Login = ({ setIsAuthenticated, setEmail }) => {
           <input
             type="email"
             value={email}
-            onChange={(e) => setEmailInput(e.target.value)}
+            onChange={(e) => setEmail(e.target.value)}
             placeholder="Email"
             required
           />
@@ -60,7 +59,7 @@ const Login = ({ setIsAuthenticated, setEmail }) => {
             required
           />
         </div>
-        <button type="submit">Login</button>
+        <button type="submit">Register</button>
       </form>
       {error && <p style={{ color: 'red' }}>{error}</p>}
       {successMessage && <p style={{ color: 'green' }}>{successMessage}</p>}
@@ -68,4 +67,4 @@ const Login = ({ setIsAuthenticated, setEmail }) => {
   );
 };
 
-export default Login;
+export default Register;

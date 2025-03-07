@@ -9,18 +9,20 @@ var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
 
 // Configure DbContext with SQLite
-//var connectionString = configuration.GetConnectionString("DefaultConnection");
-//builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlite(connectionString));
+var connectionString = configuration.GetConnectionString("DefaultConnection");
+builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlite(connectionString));
 
 // Apply migrations automatically
-//using (var scope = builder.Services.BuildServiceProvider().CreateScope())
-//{
-//    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-//    dbContext.Database.Migrate();
-//}
+using (var scope = builder.Services.BuildServiceProvider().CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    dbContext.Database.Migrate();
+}
 
 // Register the UserService for dependency injection
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IAppDbContext, AppDbContext>();
+builder.Services.AddScoped<IFingerPrintService, FingerPrintService>();
 
 
 //// Configure JWT Authentication
@@ -74,7 +76,7 @@ if (app.Environment.IsDevelopment())
 }
 
 ////For configuring CORS
-app.UseCors();
+app.UseCors("AllowSites");
 
 app.UseAuthentication();
 app.UseAuthorization();
